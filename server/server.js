@@ -13,7 +13,7 @@ var parameters = {
   extract: 'entities, concepts, keywords, doc-emotion',
   emotion: 1,
   sentiment: 1,
-  maxRetrieve: 1,
+  maxRetrieve: 5,
   url: ''
 };
 
@@ -40,6 +40,7 @@ router.post('/checkURL', function(req, res) {
 	var found = searchList(url.URL);
 	
 	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.entities, mrwatson.concepts);
+
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
 	res.send(JSON.stringify(resp));}, 5000);
@@ -112,6 +113,7 @@ var watsonPlease = function(url){
 	  if (err)
 	    console.log('error:', err);
 	  else
+	  	console.log(response);
 	    res.keywords = response.keywords;
 		res.docemotions = response.docEmotions;
 		res.concepts = response.concepts;
