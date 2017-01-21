@@ -56,11 +56,11 @@
           <div id="method">
           <h1> FNA </h1>
           <div class="btn-group">
-            <button class="btn" id="sidebar-btn" type="button"> EMOTION </button>
-            <button class="btn" id="sidebar-btn" type="button"> ENTITIES </button>
-            <button class="btn" id="sidebar-btn" type="button"> KEYWORD </button>
-            <button class="btn" id="sidebar-btn" type="button"> CONCEPT </button>
-            <button class="btn" id="sidebar-btn" type="button"> TOTAL </button>
+            <button class="btn" id="sidebar-btn" type="button" href="#idx"> EMOTION </button>
+            <button class="btn" id="sidebar-btn" type="button" href="#entities"> ENTITIES </button>
+            <button class="btn" id="sidebar-btn" type="button" href="#cloud"> KEYWORDS </button>
+            <button class="btn" id="sidebar-btn" type="button" href="#concepts"> CONCEPT </button>
+            <button class="btn" id="sidebar-btn" type="button" href="#total"> TOTAL </button>
           </div>
           </div>
         </div>
@@ -111,6 +111,8 @@
       </table>-->
       <div class="col-sm-8">
       <canvas id="ctx" width="50" height="50"></canvas>
+      <canvas id="cloud" width="50" height="50"></canvas>
+      <canvas id="age" width="50" height="50"></canvas>
       </div>
       <div class="col-sm-4" id="description">
       <h2> Emotional Analysis </h2>
@@ -178,7 +180,7 @@
          },
          title: {
             display: true,
-            text: 'Chart.js Radar Chart'
+            text: 'Emotional Analysis Radar Chart'
          },
          scale: {
             ticks: {
@@ -188,10 +190,65 @@
       }
    };
 
+   var ageData = {
+      datasets: [{
+         data: [
+            22,
+            24,
+            19,
+            20,
+            27,
+            24,
+            7
+         ],
+         backgroundColor: [
+            "#FF6384",
+            "#4BC0C0",
+            "#FFCE56",
+            "#E7E9ED",
+            "#36A2EB",
+            "#E26D00",
+            "#7744DD"
+         ],
+         label: 'Ages of some popular sites' // for legend
+      }],
+      labels: [
+         "Fox News",
+         "NPR",
+         "The Verge",
+         "CNBC",
+         "LA Times",
+         "CBS",
+         "Vice"
+      ]
+   };
+   var ageOptions = {
+      elements: {
+         arc: {
+            borderColor: "#000000"
+         }
+      }
+   };
+
    var myChart = new Chart(ctx, {
       type: 'radar',
-      data: data,
-      options: options
+      data: ageData,
+      options: ageOptions
    });
 
+   var agePlot = new Chart(age, {
+      type: 'polar',
+      data:
+      options:
+   });
+
+   var keywords = [['test', 2], ['hey', 3], ['fake news', 5]];
+   var cloudOptions = {
+      list: keywords,
+      color: 'random-light',
+      minRotation: 0,
+      maxRotation: 0,
+      shape: circle
+   };
+   var myCloud = new WordCloud(document.getElementById('cloud'), cloudOptions);
 </script>
