@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+//var async = require('async');
 var port = process.env.PORT || 8000;
 var data = require('./notCredible.json');
 var whois = require('./node_modules/whois-json/index.js');
@@ -8,6 +9,14 @@ var watson = require('watson-developer-cloud');
 var alchemy_language = watson.alchemy_language({
 	api_key: 'API_KEY'
 });
+
+function response(cred, credreason, age, agedesc)
+{
+	this.cred = cred;
+	this.credreason = credreason;
+	this.age = age;
+	this.agedesc = agedesc;
+}
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -38,20 +47,18 @@ router.get('/', function(req, res) {
 
 router.post('/checkURL', function(req, res) {
 	var url = req.body;
-	console.log(url.URL);
+
+	var age = findAge(url.URL);
+	setTimeout(function(){
 	var found = searchList(url.URL);
+	
+	var resp = new response(found.cred, found.credreason, age.age, age.agedesc);
+
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
-	res.send(JSON.stringify(found));
+	res.send(JSON.stringify(resp));}, 1000);
 });
 
-router.post('/domainAge', function(req, res) {
-	var url = req.body;
-	var response = whois(url, function(err, result) {
-		console.log(JSON.stringify(result, null, 2))
-	});
-
-});
 // REGISTER OUR ROUTES
 // ==============================================
 app.use('/api', router);
@@ -59,43 +66,37 @@ app.use('/api', router);
 app.listen(port);
 console.log('Magic happens on port ' + port);
 
-function response(status, reason)
-{
-	this.status = status;
-	this.reason = reason;
-}
-
 var searchList = function(url){
 	var res = new response(true, "This site was found in a database of known fake news sites.");
 	if(data.sites['' + url] == undefined)
 	{
-		res.status = false;
-		res.reason = "This site was not found in a database of known fake news sites. Proceed with caution";
+		res.cred = false;
+		res.credreason = "This site was not found in a database of known fake news sites. Proceed with caution";
 	}
 	return res;
 }
 
-var findAge = function(response) {
-	var res, yearCreated, age;
-	year = response.creationDate.substring(0, 4);
-	age = 2017 - parseInt(year);
-	if (age > 10) {
-		
-	}
-	else if (5 < age <= 10) {
-
-	}
-	else if (2 < age <= 5) {
-
-	}
-	else if (1 < age <= 2) {
-
-	}
-	else if (age <= 1) {
-
-	}
-	else {
-
-	}
+var findAge = function(url) {
+	var res = new response("", "", "", "");
+	//NEED TO ADD ERROR HANDLING
+	whois(url, function(err, result) {
+		var i = 0;
+		year = result.creationDate.substring(0, 4);
+		age = 2017 - parseInt(year);
+		res.age = age;
+		if (age > 5) {
+			res.agedesc = "This site is greater than 5 years old. Not very suspicious.";
+		}
+		else if (2 < age <= 5) {
+			res.agedesc = "This site is less than 5 years old. I wouldn't worry.";
+		}
+		else if (1 < age <= 2) {
+			res.agedesc = "This site is less than 2 years old. I would start to worry.";
+		}
+		else{
+			res.agedesc = "This site is less than a year old! I would do some research before I trust this site.";
+		}
+	});
+	
 	return res;
 }
