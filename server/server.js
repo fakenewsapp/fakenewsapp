@@ -3,6 +3,11 @@ var app = express();
 var port = process.env.PORT || 8000;
 var data = require('./notCredible.json');
 var bodyParser = require('body-parser');
+var watson = require('watson-developer-cloud');
+var alchemy_language = watson.alchemy_language({
+	api_key: 'API_KEY'
+});
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 

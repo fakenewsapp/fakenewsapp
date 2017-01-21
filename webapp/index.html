@@ -16,11 +16,11 @@
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/main.css">
-
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js">
+        </script>
     </head>
     <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar" role="navigation" id="nav">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -29,7 +29,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Fake News Detector</a>
+          <a class="navbar-brand" id="title">FND - The Fake News Detector</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" role="form">
@@ -40,12 +40,12 @@
     </nav>
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
+    <!--<div class="jumbotron">
       <div class="container">
         <h1>Hello everyone!</h1>
         <p>Enter the link you want to check below and our program will analyze it.</p>
       </div>
-    </div>
+    </div> -->
 
     <div class="container">
       <!-- Example row of columns -->
@@ -54,7 +54,7 @@
          <div class="input-group">
             <input type="text" class="form-control" id="url">
             <span class="input-group-btn">
-                 <button class="btn btn-default" id="analyze" href="#" type="button">Analyze</button>
+                 <button class="btn" id="analyze" href="#" type="button">Analyze</button>
             </span>
          </div>
       </div>
@@ -71,13 +71,13 @@
           <tr>
             <th scope="row">1</th>
             <td>Website Age</td>
-            <td>SHOW AGE</td>
+            <td>Age</td>
             <td>Newer websites tend to be less reliable</td>
           </tr>
           <tr>
             <th scope="row">2</th>
             <td>Emotion</td>
-            <td>some emotion</td>
+            <td>Emotions</td>
             <td>This is the general tone we picked up on</td>
           </tr>
           <tr>
@@ -89,12 +89,12 @@
           <tr class="bg-success">
            <th scope="row">4</th>
            <td>Total</td>
-           <td>Some GRADE</td>
+           <td>Grade</td>
            <td>This is your total score for the inputted website</td>
           </tr>
         </tbody>
       </table>
-      <hr>
+      
 
       <footer>
 
@@ -109,7 +109,6 @@
 </html>
 
 <script>
-  
   $("#analyze").click(function(){
     url = $("#url").val();
     $.ajax({
