@@ -34,22 +34,15 @@ var router = express.Router();
 router.post('/checkURL', function(req, res) {
 	var url = req.body;
 	var age = findAge(url.URL);
-	parameters.url = url.URL;
-	alchemy_language.combined(parameters, function (err, response) {
-	  if (err)
-	    console.log('error:', err);
-	  else
-	    console.log(JSON.stringify(response, null, 2));
-	});
-	
+	//insert watson here
+	var mrwatson = watsonPlease(url.URL);
 	setTimeout(function(){
 	var found = searchList(url.URL);
 	
-	var resp = new response(found.cred, found.credreason, age.age, age.agedesc);
-
+	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.entities, mrwatson.concepts);
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
-	res.send(JSON.stringify(resp));}, 1000);
+	res.send(JSON.stringify(resp));}, 5000);
 });
 
 // REGISTER OUR ROUTES
@@ -60,12 +53,16 @@ console.log('Magic happens on port ' + port);
 
 // Useful functions
 // ==============================================
-function response(cred, credreason, age, agedesc)
+function response(cred, credreason, age, agedesc, keywords, docemotions, entities, concepts)
 {
 	this.cred = cred;
 	this.credreason = credreason;
 	this.age = age;
 	this.agedesc = agedesc;
+	this.keywords = keywords;
+	this.docemotions = docemotions;
+	this.entities = entities;
+	this.concepts = concepts;
 }
 
 var searchList = function(url){
@@ -79,9 +76,15 @@ var searchList = function(url){
 }
 
 var findAge = function(url) {
-	var res = new response("", "", "", "");
+	var res = new response();
 	//NEED TO ADD ERROR HANDLING
 	whois(url, function(err, result) {
+		if(err)
+		{
+			res.age = "not found";
+			res.agedesc = "not found";
+			return res;
+		}
 		var i = 0;
 		year = result.creationDate.substring(0, 4);
 		age = 2017 - parseInt(year);
@@ -98,6 +101,21 @@ var findAge = function(url) {
 		else{
 			res.agedesc = "This site is less than a year old! I would do some research before I trust this site.";
 		}
+	});
+	return res;
+}
+
+var watsonPlease = function(url){
+	var res = new response();
+	parameters.url = url;
+	alchemy_language.combined(parameters, function (err, response) {
+	  if (err)
+	    console.log('error:', err);
+	  else
+	    res.keywords = response.keywords;
+		res.docemotions = response.docEmotions;
+		res.concepts = response.concepts;
+		res.entities = response.entities;
 	});
 	return res;
 }
