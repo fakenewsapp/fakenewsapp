@@ -1,0 +1,22 @@
+{
+  "name": "fakenewsapp-server",
+  "version": "1.0.0",
+  "description": "node server for app",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.0",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/fakenewsapp/fakenewsapp"
+  },
+  "author": "Evan Beneroff",
+  "license": "ISC"
+}
