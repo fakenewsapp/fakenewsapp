@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var port = process.env.PORT || 8000;
 var data = require('./notCredible.json');
+var whois = require('./node_modules/whois-json/index.js');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -38,6 +39,14 @@ router.post('/checkURL', function(req, res) {
 	res.set('Content-Type', 'text/plain');
 	res.send(JSON.stringify(found));
 });
+
+router.post('/domainAge', function(req, res) {
+	var url = req.body;
+	var response = whois(url, function(err, result) {
+		console.log(JSON.stringify(result, null, 2))
+	});
+
+});
 // REGISTER OUR ROUTES
 // ==============================================
 app.use('/api', router);
@@ -57,6 +66,31 @@ var searchList = function(url){
 	{
 		res.status = false;
 		res.reason = "This site was not found in a database of known fake news sites. Proceed with caution";
+	}
+	return res;
+}
+
+var findAge = function(response) {
+	var res, yearCreated, age;
+	year = response.creationDate.substring(0, 4);
+	age = 2017 - parseInt(year);
+	if (age > 10) {
+		
+	}
+	else if (5 < age <= 10) {
+
+	}
+	else if (2 < age <= 5) {
+
+	}
+	else if (1 < age <= 2) {
+
+	}
+	else if (age <= 1) {
+
+	}
+	else {
+
 	}
 	return res;
 }
