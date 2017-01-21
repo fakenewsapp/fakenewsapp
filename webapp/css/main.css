@@ -1,42 +1,45 @@
 body
 {
-	background-color: #202b33 !important;
+	background-color: #F3F3F3 !important;
+	font-family: 'Roboto', sans-serif;
 }
+
 #nav a
 {
-	font-size: 32px;
+	color: #767777;
+	font-size: 40px;
+	font-weight: bold;
 }
 
 #url
 {
-	background-color: #DDDDDD;
-}
-a
-{
-	color: white;
+	background-color: #EEEEEE;
+	font-size:20px;
+	height:42px;
 }
 
 #analyze
 {
 	background-color: #97A1A8 !important;
+	font-size:20px;
 }
 th, label
 {
 	font-size: 20px;
-	color: white;
+	color: #767777;
 }
 
 table, td, th
 {
-	border-top: 1px solid #374148 !important;
+	/*border-top: 1px solid #374148 !important;*/
 	border-bottom: 1px solid #374148 !important;
 	font-size: 20px;
-	color: #748592;
-	background-color: #202b33;
+	color: #878888;
+	background-color: #F3F3F3;
 }
 
 th{
-	color:#CCCCCC;
+	color:#767777;
 }
 
 #particles-js
