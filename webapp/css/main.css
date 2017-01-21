@@ -1,10 +1,48 @@
+body
+{
+	background-color: #202b33 !important;
+}
+#nav a
+{
+	font-size: 32px;
+}
 
+#url
+{
+	background-color: #DDDDDD;
+}
+a
+{
+	color: white;
+}
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
+#analyze
+{
+	background-color: #97A1A8 !important;
+}
+th, label
+{
+	font-size: 20px;
+	color: white;
+}
 
+table, td, th
+{
+	border-top: 1px solid #374148 !important;
+	border-bottom: 1px solid #374148 !important;
+	font-size: 20px;
+	color: #748592;
+	background-color: #202b33;
+}
 
+th{
+	color:#CCCCCC;
+}
+
+#particles-js
+{
+	background:cornflowerblue;
+}
 
 
 
