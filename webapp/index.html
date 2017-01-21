@@ -25,8 +25,8 @@
         </script>
     </head>
     <body>
-    <nav class="navbar" role="navigation" id="nav">
-      <div class="container">
+
+      <!--<nav class="navbar" role="navigation" id="nav">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -40,9 +40,9 @@
           <form class="navbar-form navbar-right" role="form">
 
           </form>
-        </div><!--/.navbar-collapse -->
+        </div>
       </div>
-    </nav>
+    </nav> -->
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <!--<div class="jumbotron">
@@ -51,19 +51,29 @@
         <p>Enter the link you want to check below and our program will analyze it.</p>
       </div>
     </div> -->
-
-    <div class="container">
-      <!-- Example row of columns -->
+    <div class="container-fluid">
+      <div class='col-sm-2 sidebar'>
+          <div id="method">
+          <h1> FNA </h1>
+          <div class="btn-group">
+            <button class="btn" id="sidebar-btn" type="button"> EMOTION </button>
+            <button class="btn" id="sidebar-btn" type="button"> ENTITIES </button>
+            <button class="btn" id="sidebar-btn" type="button"> KEYWORD </button>
+            <button class="btn" id="sidebar-btn" type="button"> CONCEPT </button>
+            <button class="btn" id="sidebar-btn" type="button"> TOTAL </button>
+          </div>
+          </div>
+        </div>
+   <div class="container col-sm-10">
       <div class="form-group">
-         <label for="URL">URL</label>
          <div class="input-group">
             <input type="text" class="form-control" id="url">
             <span class="input-group-btn">
-                 <button class="btn" id="analyze" href="#" type="button">Analyze</button>
+                 <button class="btn" id="analyze" href="#" type="button">ANALYZE</button>
             </span>
          </div>
       </div>
-      <table class="table table-striped">
+      <!--<table class="table table-striped">
         <thead>
           <tr>
             <th>#</th>
@@ -98,12 +108,19 @@
            <td>This is your total score for the input website</td>
           </tr>
         </tbody>
-      </table>
-      <canvas id="ctx" width="100" height="100"></canvas>
-      <canvas id="cloud" width="1000" height="400"></canvas>
-      <footer>
-
-      </footer>
+      </table>-->
+      <div class="col-sm-8">
+      <canvas id="ctx" width="50" height="50"></canvas>
+      </div>
+      <div class="col-sm-4" id="description">
+      <h2> Emotional Analysis </h2>
+      <p> The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.</p><p> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.</p>
+      <h3> Anger</h3>
+      <h3> Sadness </h3>
+      <h3> Joy </h3>
+      <h3> Fear </h3>
+      <h3> Disgust </h3>
+      <div>
     </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
@@ -124,61 +141,57 @@
             dataType: "json",
             success: function (response) {
                 console.log(response);
-                document.getElementById("notCredible").innerHTML = response.status;
-                document.getElementById("credibilityReason").innerHTML = response.reason;
+                /*document.getElementById("notCredible").innerHTML = response.status;
+                document.getElementById("credibilityReason").innerHTML = response.reason;*/
+                myChart.data.datasets[0].data[0] = response.docemotions.anger;
+                myChart.data.datasets[0].data[1] = response.docemotions.disgust;
+                myChart.data.datasets[0].data[2] = response.docemotions.fear;
+                myChart.data.datasets[0].data[3] = response.docemotions.joy;
+                myChart.data.datasets[0].data[4] = response.docemotions.sadness;
+                myChart.update();
             },
             error: function (xhr, status) {
                 alert(status);
             }
         });
-    //console.log("clicked");
 });
 
-var data = {
-   labels: ["Anger", "Disgust", "Fear", "Joy", "Sadness"],
-   datasets: [
-      {
-         label: "My First dataset",
-         backgroundColor: "rgba(179,181,198,0.2)",
-         borderColor: "rgba(179,181,198,1)",
-         pointBackgroundColor: "rgba(179,181,198,1)",
-         pointBorderColor: "#fff",
-         pointHoverBackgroundColor: "#fff",
-         pointHoverBorderColor: "rgba(179,181,198,1)",
-         data: [0.494901, 0.498914, 0.560525, 0.202139, 0.235898]
-      }
-   ]
-};
-var options = {
-   options: {
-      legend: {
-         position: 'top',
-      },
-      title: {
-         display: true,
-         text: 'Chart.js Radar Chart'
-      },
-      scale: {
-         ticks: {
-            beginAtZero: true
+   var data = {
+      labels: ["Anger", "Disgust", "Fear", "Joy", "Sadness"],
+      datasets: [
+         {
+            label: "Emotions",
+            backgroundColor: "rgba(255,99,132,0.2)",
+            borderColor: "rgba(255,99,132,1)",
+            pointBackgroundColor: "rgba(255,99,132,1)",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgba(255,99,132,1)",
+            data: [1, 1, 1, 1, 1]
+         }
+      ]
+   };
+   var options = {
+      options: {
+         legend: {
+            position: 'top',
+         },
+         title: {
+            display: true,
+            text: 'Chart.js Radar Chart'
+         },
+         scale: {
+            ticks: {
+               beginAtZero: true
+            }
          }
       }
-   }
-};
-var myChart = new Chart(ctx, {
-   type: 'radar',
-   data: data,
-   options: options
-});
+   };
 
-var list = [['foo bar', 12], ['dunno', 6]]
-var cloudOptions = {
-   list: list,
-   color: 'random-light',
-   weightFactor: 10,
-   minRotation: 0,
-   maxRotation: 0,
-   hover: callback(item, dimension, event)
-};
-var cloud = new WordCloud(document.getElementById('cloud'), cloudOptions);
+   var myChart = new Chart(ctx, {
+      type: 'radar',
+      data: data,
+      options: options
+   });
+
 </script>
