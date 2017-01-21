@@ -1,30 +1,25 @@
 var express = require('express');
 var app = express();
-//var async = require('async');
 var port = process.env.PORT || 8000;
 var data = require('./notCredible.json');
 var whois = require('./node_modules/whois-json/index.js');
 var bodyParser = require('body-parser');
 var watson = require('watson-developer-cloud');
 var alchemy_language = watson.alchemy_language({
-	api_key: 'API_KEY'
+	api_key: '08ba5e537d6334cb5105f139e001fdaa795fab49'
 });
 
-function response(cred, credreason, age, agedesc)
-{
-	this.cred = cred;
-	this.credreason = credreason;
-	this.age = age;
-	this.agedesc = agedesc;
-}
+var parameters = {
+  extract: 'entities, concepts, keywords, doc-emotion',
+  emotion: 1,
+  sentiment: 1,
+  maxRetrieve: 1,
+  url: ''
+};
+
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-
-// ROUTES FOR OUR API
-// ==============================================
-var router = express.Router();
-
 // Allow cross origins requests, needed for local testing
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -32,23 +27,21 @@ app.use(function(req, res, next) {
   next();
 });
 
-// middleware that logs all requests
-router.use(function(req, res, next){
-	console.log('Something is happening.');
-
-	// go to the next route!
-	next();
-});
-
-// test route
-router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!' });
-});
+// ROUTES FOR OUR API
+// ==============================================
+var router = express.Router();
 
 router.post('/checkURL', function(req, res) {
 	var url = req.body;
-
 	var age = findAge(url.URL);
+	parameters.url = url.URL;
+	alchemy_language.combined(parameters, function (err, response) {
+	  if (err)
+	    console.log('error:', err);
+	  else
+	    console.log(JSON.stringify(response, null, 2));
+	});
+	
 	setTimeout(function(){
 	var found = searchList(url.URL);
 	
@@ -62,9 +55,18 @@ router.post('/checkURL', function(req, res) {
 // REGISTER OUR ROUTES
 // ==============================================
 app.use('/api', router);
-
 app.listen(port);
 console.log('Magic happens on port ' + port);
+
+// Useful functions
+// ==============================================
+function response(cred, credreason, age, agedesc)
+{
+	this.cred = cred;
+	this.credreason = credreason;
+	this.age = age;
+	this.agedesc = agedesc;
+}
 
 var searchList = function(url){
 	var res = new response(true, "This site was found in a database of known fake news sites.");
@@ -97,6 +99,5 @@ var findAge = function(url) {
 			res.agedesc = "This site is less than a year old! I would do some research before I trust this site.";
 		}
 	});
-	
 	return res;
 }
