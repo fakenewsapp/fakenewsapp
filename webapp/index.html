@@ -18,6 +18,8 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link rel="stylesheet" href="css/main.css">
         <script src="../node_modules/chart.js/dist/Chart.js"></script>
+        <script src="../node_modules/wordcloud/src/wordcloud2.js"></script>
+        <script src="../node_modules/d3.layout.cloud/node_modules/d3-dispatch/build/d3-dispatch.js"></script>
 
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js">
         </script>
@@ -98,7 +100,7 @@
         </tbody>
       </table>
       <canvas id="ctx" width="100" height="100"></canvas>
-
+      <canvas id="cloud" width="1000" height="400"></canvas>
       <footer>
 
       </footer>
@@ -132,40 +134,51 @@
     //console.log("clicked");
 });
 
-   var data = {
-      labels: ["Anger", "Disgust", "Fear", "Joy", "Sadness"],
-      datasets: [
-         {
-            label: "My First dataset",
-            backgroundColor: "rgba(179,181,198,0.2)",
-            borderColor: "rgba(179,181,198,1)",
-            pointBackgroundColor: "rgba(179,181,198,1)",
-            pointBorderColor: "#fff",
-            pointHoverBackgroundColor: "#fff",
-            pointHoverBorderColor: "rgba(179,181,198,1)",
-            data: [0.494901, 0.498914, 0.560525, 0.202139, 0.235898]
-         }
-      ]
-   };
-   var options = {
-      options: {
-         legend: {
-            position: 'top',
-         },
-         title: {
-            display: true,
-            text: 'Chart.js Radar Chart'
-         },
-         scale: {
-            ticks: {
-               beginAtZero: true
-            }
+var data = {
+   labels: ["Anger", "Disgust", "Fear", "Joy", "Sadness"],
+   datasets: [
+      {
+         label: "My First dataset",
+         backgroundColor: "rgba(179,181,198,0.2)",
+         borderColor: "rgba(179,181,198,1)",
+         pointBackgroundColor: "rgba(179,181,198,1)",
+         pointBorderColor: "#fff",
+         pointHoverBackgroundColor: "#fff",
+         pointHoverBorderColor: "rgba(179,181,198,1)",
+         data: [0.494901, 0.498914, 0.560525, 0.202139, 0.235898]
+      }
+   ]
+};
+var options = {
+   options: {
+      legend: {
+         position: 'top',
+      },
+      title: {
+         display: true,
+         text: 'Chart.js Radar Chart'
+      },
+      scale: {
+         ticks: {
+            beginAtZero: true
          }
       }
-   };
-   var myChart = new Chart(ctx, {
-      type: 'radar',
-      data: data,
-      options: options
-   });
+   }
+};
+var myChart = new Chart(ctx, {
+   type: 'radar',
+   data: data,
+   options: options
+});
+
+var list = [['foo bar', 12], ['dunno', 6]]
+var cloudOptions = {
+   list: list,
+   color: 'random-light',
+   weightFactor: 10,
+   minRotation: 0,
+   maxRotation: 0,
+   hover: callback(item, dimension, event)
+};
+var cloud = new WordCloud(document.getElementById('cloud'), cloudOptions);
 </script>
