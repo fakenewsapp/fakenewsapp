@@ -18,8 +18,7 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link rel="stylesheet" href="css/main.css">
         <script src="../node_modules/chart.js/dist/Chart.js"></script>
-
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js">
+        
         </script>
     </head>
     <body>
@@ -29,10 +28,9 @@
           <h1> FNA </h1>
           <div class="btn-group">
             <button class="btn emotion" id="sidebar-btn" type="button"> EMOTION </button>
-            <button class="btn entities" id="sidebar-btn" type="button"> ENTITIES </button>
+            <button class="btn entities" id="sidebar-btn" type="button"> MATURITY </button>
             <button class="btn keywords" id="sidebar-btn" type="button"> KEYWORDS </button>
-            <button class="btn concept" id="sidebar-btn" type="button"> CONCEPT </button>
-            <button class="btn total" id="sidebar-btn" type="button"> TOTAL </button>
+            <button class="btn total" id="sidebar-btn" type="button"> NEURAL NET </button>
           </div>
           </div>
         </div>
@@ -55,7 +53,7 @@
       <h2 id="title"> Emotional Analysis </h2>
       <p id="writing"> The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.<br><br> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.</p>
       <div>
-    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    </div>      
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
         <script src="js/vendor/bootstrap.min.js"></script>
@@ -114,7 +112,7 @@ var ageData = {
          bubble = undefined;
       }
       document.getElementById("title").innerHTML = "Age of Website";
-      document.getElementById("writing").innerHTML = "A website that is too young looks very suspicious.";
+      document.getElementById("writing").innerHTML = "'Fake news is nothing new. But bogus stories can reach more people more quickly via social media than what good old-fashioned viral emails could accomplish in years past. <br> <br> Concern about the phenomenon led Facebook and Google to announce that they’ll crack down on fake news sites, restricting their ability to garner ad revenue. Perhaps that could dissipate the amount of malarkey online, though news consumers themselves are the best defense against the spread of misinformation.' <br> &#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;-FactCheck.org";
       agePlot = new Chart(age, {
         type: 'polarArea',
         data: ageData,
@@ -136,7 +134,7 @@ var ageData = {
       bubble = undefined;
     }
     document.getElementById("title").innerHTML = "Emotional Analysis";
-    document.getElementById("writing").innerHTML = " The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.</p><p> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.";
+    document.getElementById("writing").innerHTML = "The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.<br> <br> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.";
     myChart = new Chart(ctx, {
       type: 'radar',
       data: data,
@@ -158,11 +156,11 @@ var ageData = {
       bubble = undefined;
     }
     document.getElementById("title").innerHTML = "Keyword Analysis";
-    document.getElementById("writing").innerHTML = "The most prominent topics of the article are plotted in descending order.";
+    document.getElementById("writing").innerHTML = "The most prominent topics of the article are plotted in descending order according to relevancy. <br> <br> Paying close attention to the keywords of the article can show you the overarching themes of the article.";
     keywordPlot = new Chart(keyword, {
       type: 'bar',
       data: keywords,
-      options: options
+      options: koptions
     });
   });
 
@@ -179,13 +177,14 @@ var ageData = {
        keywordPlot.destroy();
        keywordPlot = undefined;
      }
-     document.getElementById("title").innerHTML = "Total Analysis";
-     document.getElementById("writing").innerHTML = "Here is a plot of all the previous categories and a final grade for the article.";
+     document.getElementById("title").innerHTML = "Neural Net Analysis";
+     
      bubble = new Chart(total, {
         type: 'bubble',
         data: conclusion,
         options: bubbleOptions
      });
+     document.getElementById("writing").innerHTML = "There are several criteria that can be used to determine whether or not a news article is 'fake news'. <br> <br> Using the categories that we found most suitable, we were able to create a neural network can take in news articles as input and evaluate reliability. It produces a number between 0 and 1, 0 for reliable and 1 for 'definitely fake news'. <br> <br> Thanks to IBM Watson, we used some of his analysis in our neural network. And thanks to the creators of synaptic.js, the framework that allows us to make this analysis. <br><br> If your score is above .5, I would strongly suggest checking the article's references. <br><br> If it is above .75, then either the site is a known creator of 'fake news', or the neural network has determined that this is 'fake news'.";
   });
 
 
@@ -211,8 +210,7 @@ var ageData = {
                 if(agePlot != undefined)
                 {
                   agePlot.data.datasets[0].data[6] = response.age;
-                  //agePlot.data.labels[6] = response.url;
-                  document.getElementById("writing").innerHTML = response.agedesc + "<br><br>" + response.credreason;
+                  document.getElementById("writing").innerHTML += "<br><br>" +  response.agedesc + "<br><br>" + response.credreason;
                   agePlot.update();
               }
               if(keywordPlot != undefined)
@@ -235,11 +233,13 @@ var ageData = {
               }
               if (bubble != undefined)
               {
-                 bubble.data.datasets[2].data[0].x = 6;
-                 bubble.data.datasets[2].data[0].y = (parseFloat(response.docemotions.anger) + parseFloat(response.docemotions.disgust) + parseFloat(response.docemotions.fear) + parseFloat(response.docemotions.joy) + parseFloat(response.docemotions.sadness))/5.0;
-                 bubble.data.datasets[2].data[0].r = response.age/2.0;
+                 bubble.data.datasets[2].data[0].x = response.age;
+                 bubble.data.datasets[2].data[0].y = response.indicator[0];
+                 bubble.data.datasets[2].data[0].r = 11;
                  bubble.update();
                  console.log(bubble.data.datasets[2].data[0].y);
+
+                 document.getElementById("writing").innerHTML += "<br><br> The score for your news article: " + response.indicator[0] + ".";
               }
             },
             error: function (xhr, status) {
@@ -270,28 +270,62 @@ var ageData = {
          },
          title: {
             display: true,
-            text: 'Emotional Analysis Radar Chart'
+            text: 'Keyword Analysis Plot'
          },
          scale: {
             ticks: {
-               beginAtZero: true
+               beginAtZero: true,
+               min: 0,
+               max: 1
             }
          }
       }
    };
 
+    var koptions = {
+          options: {
+             legend: {
+                position: 'top',
+             },
+             title: {
+                display: true,
+                text: 'Emotional Analysis Radar Chart'
+             },
+             scale: {
+                ticks: {
+                   beginAtZero: true
+                }
+             }
+          }
+       };
    var keywords = {
-      labels: ["Trump", "Obama", "President", "Inaguration", "Sadness"],
+      labels: ["Trump", "Obama", "President", "Inauguration", "Sadness", "Women's March", "White House"],
       datasets: [
          {
             label: "Keywords",
-            backgroundColor: "rgba(33,150,242,0.5)",
-            borderColor: "rgba(33,150,242,1)",
+            backgroundColor: [
+            "rgba(33,150,242,0.5)",
+            "rgba(255,193,7,0.5)",
+            "rgba(0,105,92,0.5)",
+            "rgba(81,45,168,0.5)",
+            "rgba(219,34,42,0.5)",
+            "rgba(46,125,50,0.5)",
+            "rgba(5,60,94,.9)"
+            ],
+            borderColor:[
+                "rgba(33,150,242,1)",
+                "rgba(255,193,7,1)",
+                "rgba(0,105,92,1)",
+                "rgba(81,45,168,1)",
+                "rgba(219,34,42,1)",
+                "rgba(46,125,50,1)",
+                "rgba(5,60,94,1)"
+            ],
             pointBackgroundColor: "rgba(255,99,132,1)",
             pointBorderColor: "#fff",
             pointHoverBackgroundColor: "#fff",
             pointHoverBorderColor: "rgba(255,99,132,1)",
-            data: [.5, 3, 2, 2.5, 4]
+            data: [.5, .75, .2, .25, .9, .15, .3]
          }
       ]
    };
@@ -309,17 +343,17 @@ var ageData = {
          data: [
             {
                x: 7,
-               y: .24275,
+               y: .15275,
+               r: 12
+            },
+            {
+               x: 12,
+               y: .105219,
                r: 12
             },
             {
                x: 9,
-               y: .305219,
-               r: 12
-            },
-            {
-               x: 8.5,
-               y: .287713,
+               y: .187713,
                r: 12
             }
          ],
@@ -330,18 +364,18 @@ var ageData = {
          label: 'NPR News',
          data: [
             {
-               x: 8.5,
-               y: .385338,
+               x: 3,
+               y: .13338,
                r: 11
             },
             {
-               x: 10,
-               y: .232852,
+               x: 9,
+               y: .092852,
                r: 11
             },
             {
-               x: 9.5,
-               y: .30776,
+               x: 13,
+               y: .055776,
                r: 11
             }
          ],
@@ -352,8 +386,8 @@ var ageData = {
          label: 'Your site',
          data: [
             {
-               x: 5,
-               y: 0.34,
+               x: 0,
+               y: 0,
                r: 0
             }
          ],
@@ -370,11 +404,24 @@ var ageData = {
          }
       },
       scales: {
-         xAxes: [{
-            ticks: {
-               max: 10,
-               min: 0
+          yAxes: [{
+            scaleLabel:
+            {
+              display: true,
+              labelString: 'Fake News Indicator'
             }
+          }],
+          xAxes: [{
+            scaleLabel:
+            {
+              display:true,
+              labelString: 'Age (years)'
+              
+            },
+            ticks: {
+               max: 30,
+               min: 0
+              }
          }]
       }
    };

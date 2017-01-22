@@ -34,29 +34,23 @@ var router = express.Router();
 router.post('/checkURL', function(req, res) {
 	var url = req.body;
 	var result = url.URL.replace(/.*?:\/\//g, "");
-	//var result = url.URL.match(/^https?\:\/\/(?:www\.)?([^\/?#]+)(?:[\/?#]|$)/i);
-	console.log(result);
-	// var str = url.URL;
-	// if (str.indexOf("http")) {
-	// 	str = str.split("/");
-	// 	str = str[2];
-	// 	console.log(str);
-	// }
 	if (result.includes("www")) {
 		result = result.split("www.");
 		result = result[1];
-		console.log(result);
+	}
+	if(result.includes("/")){
+		result = result.split("/");
+		result = result[0];
 	}
 	var age = findAge(result);
 	//insert watson here
-	var mrwatson = watsonPlease(result);
+	var mrwatson = watsonPlease(url.URL);
 	setTimeout(function(){
 	var found = searchList(result);
-
-	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.concepts);
 	var siteAge = age.age / 20;
-
-	trainNet(mrwatson.docemotions.anger, mrwatson.docemotions.joy, mrwatson.docemotions.disgust, mrwatson.docemotions.fear, mrwatson.docemotions.sadness, siteAge);
+	var indicator = trainNet(mrwatson.docemotions.anger, mrwatson.docemotions.joy, mrwatson.docemotions.disgust, mrwatson.docemotions.fear, mrwatson.docemotions.sadness, siteAge);
+	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.concepts, indicator);
+	
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
 	res.send(JSON.stringify(resp));}, 5000);
@@ -70,7 +64,7 @@ console.log('Magic happens on port ' + port);
 
 // Useful functions
 // ==============================================
-function response(cred, credreason, age, agedesc, keywords, docemotions, entities, url, concepts)
+function response(cred, credreason, age, agedesc, keywords, docemotions, entities, indicator)
 {
 	this.cred = cred;
 	this.credreason = credreason;
@@ -78,16 +72,15 @@ function response(cred, credreason, age, agedesc, keywords, docemotions, entitie
 	this.agedesc = agedesc;
 	this.keywords = keywords;
 	this.docemotions = docemotions;
-	this.url = url;
-	this.concepts = concepts;
+	this.indicator = indicator;
 }
 
 var searchList = function(url){
-	var res = new response(true, "This site was found in a database of known fake news sites.");
+	var res = new response(true, "This site was found in a database of known fake news sites. Proceed with caution.");
 	if(data.sites['' + url] == undefined)
 	{
 		res.cred = false;
-		res.credreason = "This site was not found in a database of known fake news sites. Proceed with caution";
+		res.credreason = "This site was not found in a database of known fake news sites.";
 	}
 	return res;
 }
@@ -211,5 +204,7 @@ var trainNet = function(anger, joy, disgust, fear, sadness, age){
 	// console.log(myNet.activate([.9, .3, .9, .8, .4, .9]));
 	// console.log(myNet.activate([.3, .1, .3, .5, .6, .3]));
 	// console.log(myNet.activate([.3, .3, .3, .3, .3, .7]));
-	console.log(myNet.activate([anger, joy, disgust, fear, sadness, age]));
+	var res = myNet.activate([anger, joy, disgust, fear, sadness, age]);
+	console.log(res);
+	return res;
 }
