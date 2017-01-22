@@ -236,7 +236,7 @@ var ageData = {
               if (bubble != undefined)
               {
                  bubble.data.datasets[2].data[0].x = 6;
-                 bubble.data.datasets[2].data[0].y = parseInt(response.docemotions.sadness);
+                 bubble.data.datasets[2].data[0].y = (parseFloat(response.docemotions.anger) + parseFloat(response.docemotions.disgust) + parseFloat(response.docemotions.fear) + parseFloat(response.docemotions.joy) + parseFloat(response.docemotions.sadness))/5.0;
                  bubble.data.datasets[2].data[0].r = response.age/2.0;
                  bubble.update();
                  console.log(bubble.data.datasets[2].data[0].y);

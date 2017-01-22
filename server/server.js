@@ -33,11 +33,25 @@ var router = express.Router();
 
 router.post('/checkURL', function(req, res) {
 	var url = req.body;
-	var age = findAge(url.URL);
+	var result = url.URL.replace(/.*?:\/\//g, "");
+	//var result = url.URL.match(/^https?\:\/\/(?:www\.)?([^\/?#]+)(?:[\/?#]|$)/i);
+	console.log(result);
+	// var str = url.URL;
+	// if (str.indexOf("http")) {
+	// 	str = str.split("/");
+	// 	str = str[2];
+	// 	console.log(str);
+	// }
+	if (result.includes("www")) {
+		result = result.split("www.");
+		result = result[1];
+		console.log(result);
+	}
+	var age = findAge(result);
 	//insert watson here
-	var mrwatson = watsonPlease(url.URL);
+	var mrwatson = watsonPlease(result);
 	setTimeout(function(){
-	var found = searchList(url.URL);
+	var found = searchList(result);
 
 	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.concepts);
 	var siteAge = age.age / 20;
@@ -80,18 +94,14 @@ var searchList = function(url){
 
 var findAge = function(url) {
 	var res = new response();
-	var str = url.split("/");
-	str = str[2].split("www.");
-	console.log(str[1]);
 	//NEED TO ADD ERROR HANDLING
-	whois(str[1], function(err, result) {
+	whois(url, function(err, result) {
 		if(err || result == undefined)
 		{
 			res.age = "not found";
 			res.agedesc = "not found";
 			return res;
 		}
-		//res.url = str[1];
 		var i = 0;
 		year = result.creationDate.substring(0, 4);
 		age = 2017 - parseInt(year);
@@ -129,7 +139,7 @@ var watsonPlease = function(url){
 }
 
 
-// NEURAL NET 
+// NEURAL NET
 var synaptic = require('synaptic');
 var Neuron = synaptic.Neuron,
     Layer = synaptic.Layer,
@@ -196,11 +206,10 @@ var trainNet = function(anger, joy, disgust, fear, sadness, age){
 	}
 
 	myNet.trainer.train(trainingSet, trainingOptions);
-	
+
 	//console.log(myNet.activate([.5, .3, .2, .1, .4, .1]));
 	// console.log(myNet.activate([.9, .3, .9, .8, .4, .9]));
 	// console.log(myNet.activate([.3, .1, .3, .5, .6, .3]));
 	// console.log(myNet.activate([.3, .3, .3, .3, .3, .7]));
 	console.log(myNet.activate([anger, joy, disgust, fear, sadness, age]));
 }
-
