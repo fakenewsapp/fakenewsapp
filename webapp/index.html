@@ -191,7 +191,7 @@ var ageData = {
   $("#analyze").click(function(){
     url = $("#url").val();
     $.ajax({
-            url: "http://sample-env.2zkmre7c3j.us-west-2.elasticbeanstalk.com/api/checkURL",
+            url: "https://sample-env.2zkmre7c3j.us-west-2.elasticbeanstalk.com/api/checkURL",
             type: "POST",
             crossDomain: true,
             data: {"URL": url},
