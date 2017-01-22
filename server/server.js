@@ -190,11 +190,23 @@ var trainNet = function(anger, joy, disgust, fear, sadness, age){
 	  {
 	    input:  [.8, .2, .8, .8, .5, .5],
 	    output: [1]
+	  },
+	  {
+	  	input: [.144613, .100378, .437884, .207788, .493483, .25],
+	  	output: [1]
+	  },
+	  {
+	  	input: [.193767, .194282, .268141, .152572, .458993, 1],
+	  	output: [0]
+	  },
+	  {
+	  	input: [.116694, .217193, .461533, .505198, .519201, 1],
+	  	output: [0]
 	  }
 	]
 	var trainingOptions = {
 	  rate: .1,
-	  iterations: 20000,
+	  iterations: 80000,
 	  error: .005,
 	}
 
