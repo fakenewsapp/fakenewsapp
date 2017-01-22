@@ -40,10 +40,12 @@ router.post('/checkURL', function(req, res) {
 	var found = searchList(url.URL);
 
 	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.concepts);
+	var siteAge = age.age / 20;
 
+	trainNet(mrwatson.docemotions.anger, mrwatson.docemotions.joy, mrwatson.docemotions.disgust, mrwatson.docemotions.fear, mrwatson.docemotions.sadness, siteAge);
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
-	res.send(JSON.stringify(resp));}, 3000);
+	res.send(JSON.stringify(resp));}, 5000);
 });
 
 // REGISTER OUR ROUTES
@@ -117,7 +119,7 @@ var watsonPlease = function(url){
 	  if (err)
 	    console.log('error:', err);
 	  else
-	  	console.log(response);
+	  	//console.log(response);
 	    res.keywords = response.keywords;
 		res.docemotions = response.docEmotions;
 		res.concepts = response.concepts;
@@ -125,3 +127,80 @@ var watsonPlease = function(url){
 	});
 	return res;
 }
+
+
+// NEURAL NET 
+var synaptic = require('synaptic');
+var Neuron = synaptic.Neuron,
+    Layer = synaptic.Layer,
+    Network = synaptic.Network,
+    Trainer = synaptic.Trainer,
+    Architect = synaptic.Architect;
+
+/*var neuralNet = function(anger, joy, disgust, fear, sadness, age){
+	var age = new Layer(1);
+	var emotion = new Layer(5);
+	var result = new Layer(1);
+	var connection = emotion.project(age);
+	result.gate(connection, Layer.gateType.Output_Gate);
+	var learningRate = .1;
+
+	for (var i = 0; i < 20000; i++)
+	{
+		// anger, joy, disgust, fear, sadness
+		emotion.activate([.6, .1, .6, .6, .6]);
+		// very low age
+		age.activate([0]);
+
+		result.activate();
+		result.propagate(learningRate, [1]);
+	}
+
+	for (var i = 0; i < 20000; i++){
+		emotion.activate([.1, .6, .1, .1, .1]);
+		age.activate([1]);
+		result.activate();
+		result.propagate(learningRate, [0]);
+	}
+
+	emotion.activate([anger, joy, disgust, fear, sadness]);
+	age.activate([age]);
+	result.activate();
+	console.log(result);
+}*/
+
+//neuralNet(.6, .1, .2, .6, .2, .1);
+//neuralNet(.6, .1, .2, .6, .2, .9);
+
+var trainNet = function(anger, joy, disgust, fear, sadness, age){
+	var myNet = new Architect.Perceptron(6, 4, 1);
+
+	var trainingSet = [
+	 {
+	    input: [.6, .1, .2, .6, .2, .1],
+	    output: [1]
+	  },
+	  {
+	    input:  [.6, .1, .2, .6, .2, 1],
+	    output: [0]
+	  },
+	  {
+	    input:  [.8, .2, .8, .8, .5, .5],
+	    output: [1]
+	  }
+	]
+	var trainingOptions = {
+	  rate: .1,
+	  iterations: 20000,
+	  error: .005,
+	}
+
+	myNet.trainer.train(trainingSet, trainingOptions);
+	
+	//console.log(myNet.activate([.5, .3, .2, .1, .4, .1]));
+	// console.log(myNet.activate([.9, .3, .9, .8, .4, .9]));
+	// console.log(myNet.activate([.3, .1, .3, .5, .6, .3]));
+	// console.log(myNet.activate([.3, .3, .3, .3, .3, .7]));
+	console.log(myNet.activate([anger, joy, disgust, fear, sadness, age]));
+}
+
