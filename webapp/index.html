@@ -18,49 +18,21 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link rel="stylesheet" href="css/main.css">
         <script src="../node_modules/chart.js/dist/Chart.js"></script>
-        <script src="../node_modules/wordcloud/src/wordcloud2.js"></script>
-        <script src="../node_modules/d3.layout.cloud/node_modules/d3-dispatch/build/d3-dispatch.js"></script>
 
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js">
         </script>
     </head>
     <body>
-
-      <!--<nav class="navbar" role="navigation" id="nav">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" id="title">FND - The Fake News Detector</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="form">
-
-          </form>
-        </div>
-      </div>
-    </nav> -->
-
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <!--<div class="jumbotron">
-      <div class="container">
-        <h1>Hello everyone!</h1>
-        <p>Enter the link you want to check below and our program will analyze it.</p>
-      </div>
-    </div> -->
     <div class="container-fluid">
       <div class='col-sm-2 sidebar'>
           <div id="method">
           <h1> FNA </h1>
           <div class="btn-group">
-            <button class="btn" id="sidebar-btn" type="button" href="#idx"> EMOTION </button>
-            <button class="btn" id="sidebar-btn" type="button" href="#entities"> ENTITIES </button>
-            <button class="btn" id="sidebar-btn" type="button" href="#cloud"> KEYWORDS </button>
-            <button class="btn" id="sidebar-btn" type="button" href="#concepts"> CONCEPT </button>
-            <button class="btn" id="sidebar-btn" type="button" href="#total"> TOTAL </button>
+            <button class="btn emotion" id="sidebar-btn" type="button"> EMOTION </button>
+            <button class="btn entities" id="sidebar-btn" type="button"> ENTITIES </button>
+            <button class="btn keywords" id="sidebar-btn" type="button"> KEYWORDS </button>
+            <button class="btn concept" id="sidebar-btn" type="button"> CONCEPT </button>
+            <button class="btn total" id="sidebar-btn" type="button"> TOTAL </button>
           </div>
           </div>
         </div>
@@ -73,66 +45,113 @@
             </span>
          </div>
       </div>
-      <!--<table class="table table-striped">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>CATEGORY</th>
-            <th>SCORE</th>
-            <th>DESCRIPTION</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Website Age</td>
-            <td>Age</td>
-            <td>Newer websites tend to be less reliable</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Emotion</td>
-            <td>Emotions</td>
-            <td>This is the general tone we picked up on</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Association</td>
-            <td id="notCredible"></td>
-            <td id="credibilityReason">We check authors and websites to see if this article is correlated to other known fake news sites</td>
-          </tr>
-          <tr class="bg-success">
-           <th scope="row">4</th>
-           <td>Total</td>
-           <td>Grade</td>
-           <td>This is your total score for the input website</td>
-          </tr>
-        </tbody>
-      </table>-->
       <div class="col-sm-8">
-      <canvas id="ctx" width="50" height="50"></canvas>
-      <canvas id="cloud" width="50" height="50"></canvas>
-      <canvas id="age" width="50" height="50"></canvas>
+      <canvas id="ctx" width="1" height="1"></canvas>
+      <canvas id="keyword" width="1" height="1"></canvas>
+      <canvas id="age" width="1" height="1"></canvas>
       </div>
       <div class="col-sm-4" id="description">
-      <h2> Emotional Analysis </h2>
-      <p> The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.</p><p> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.</p>
-      <h3> Anger</h3>
-      <h3> Sadness </h3>
-      <h3> Joy </h3>
-      <h3> Fear </h3>
-      <h3> Disgust </h3>
+      <h2 id="title"> Emotional Analysis </h2>
+      <p id="writing"> The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.<br><br> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.</p>
       <div>
     </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
         <script src="js/vendor/bootstrap.min.js"></script>
 
-        <script src="js/main.js"></script>
     </body>
 </html>
 
 <script>
+var agePlot;
+var keywordPlot;
+var res;
+var ageData = {
+    labels: ["Fox News", "NPR", "The Verge", "CNBC", "LA Times", "CBS","Your Site"],
+      datasets: [{
+        label: 'Ages of some popular sites',
+         data: [22, 24, 19, 20, 27, 24, 0],
+         backgroundColor: [
+            "rgba(33,150,242,0.5)",
+            "rgba(255,193,7,0.5)",
+            "rgba(0,105,92,0.5)",
+            "rgba(81,45,168,0.5)",
+            "rgba(219,34,42,0.5)",
+            "rgba(46,125,50,0.5)",
+            "rgba(5,60,94,.9)"
+        ],
+        borderColor:[
+            "rgba(33,150,242,1)",
+            "rgba(255,193,7,1)",
+            "rgba(0,105,92,1)",
+            "rgba(81,45,168,1)",
+            "rgba(219,34,42,1)",
+            "rgba(46,125,50,1)",
+            "rgba(5,60,94,1)"
+        ]
+      }]
+   };
+   var ageOptions = {
+      elements: {
+         arc: {
+            borderColor: "#000000"
+         }
+      }
+   };
+  $(".entities").click(function(){
+      if(myChart != undefined){
+        myChart.destroy();
+        myChart = undefined;
+      }
+      if(keywordPlot != undefined){
+        keywordPlot.destroy();
+      }
+      document.getElementById("title").innerHTML = "Age of Website";
+      document.getElementById("writing").innerHTML = "Insert age analysis here.";
+      agePlot = new Chart(age, {
+        type: 'polarArea',
+        data: ageData,
+        options: ageOptions
+      });
+  });
+
+  $(".emotion").click(function(){
+    if(agePlot != undefined){
+      agePlot.destroy();
+      agePlot = undefined;
+    }
+    if(keywordPlot != undefined){
+      keywordPlot.destroy();
+    }
+  
+    document.getElementById("title").innerHTML = "Emotional Analysis";
+    document.getElementById("writing").innerHTML = " The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.</p><p> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.";
+    myChart = new Chart(ctx, {
+      type: 'radar',
+      data: data,
+      options: options
+   });
+  });
+
+  $(".keywords").click(function(){
+    if(agePlot != undefined){
+      agePlot.destroy();
+      agePlot = undefined;
+    }
+    if(myChart != undefined){
+      myChart.destroy();
+      myChart = undefined;
+    }
+    document.getElementById("title").innerHTML = "Keyword Analysis";
+    document.getElementById("writing").innerHTML = "Insert keyword analysis here.";
+    keywordPlot = new Chart(keyword, {
+      type: 'bar',
+      data: keywords,
+      options: options
+    });
+  });
+
+
   $("#analyze").click(function(){
     url = $("#url").val();
     $.ajax({
@@ -142,15 +161,23 @@
             data: {"URL": url},
             dataType: "json",
             success: function (response) {
-                console.log(response);
-                /*document.getElementById("notCredible").innerHTML = response.status;
-                document.getElementById("credibilityReason").innerHTML = response.reason;*/
-                myChart.data.datasets[0].data[0] = response.docemotions.anger;
-                myChart.data.datasets[0].data[1] = response.docemotions.disgust;
-                myChart.data.datasets[0].data[2] = response.docemotions.fear;
-                myChart.data.datasets[0].data[3] = response.docemotions.joy;
-                myChart.data.datasets[0].data[4] = response.docemotions.sadness;
-                myChart.update();
+              console.log(response);
+              res = response;
+                if(myChart != undefined){
+                  myChart.data.datasets[0].data[0] = response.docemotions.anger;
+                  myChart.data.datasets[0].data[1] = response.docemotions.disgust;
+                  myChart.data.datasets[0].data[2] = response.docemotions.fear;
+                  myChart.data.datasets[0].data[3] = response.docemotions.joy;
+                  myChart.data.datasets[0].data[4] = response.docemotions.sadness;
+                  myChart.update();
+                }
+                if(agePlot != undefined)
+                {
+                  agePlot.data.datasets[0].data[6] = response.age;
+                  //agePlot.data.labels[6] = response.url;
+                  document.getElementById("writing").innerHTML = response.agedesc + "<br><br>" + response.credreason;
+                  agePlot.update();
+              }
             },
             error: function (xhr, status) {
                 alert(status);
@@ -163,7 +190,7 @@
       datasets: [
          {
             label: "Emotions",
-            backgroundColor: "rgba(255,99,132,0.2)",
+            backgroundColor: "rgba(255,99,132,0.3)",
             borderColor: "rgba(255,99,132,1)",
             pointBackgroundColor: "rgba(255,99,132,1)",
             pointBorderColor: "#fff",
@@ -190,65 +217,27 @@
       }
    };
 
-   var ageData = {
-      datasets: [{
-         data: [
-            22,
-            24,
-            19,
-            20,
-            27,
-            24,
-            7
-         ],
-         backgroundColor: [
-            "#FF6384",
-            "#4BC0C0",
-            "#FFCE56",
-            "#E7E9ED",
-            "#36A2EB",
-            "#E26D00",
-            "#7744DD"
-         ],
-         label: 'Ages of some popular sites' // for legend
-      }],
-      labels: [
-         "Fox News",
-         "NPR",
-         "The Verge",
-         "CNBC",
-         "LA Times",
-         "CBS",
-         "Vice"
-      ]
-   };
-   var ageOptions = {
-      elements: {
-         arc: {
-            borderColor: "#000000"
+   
+   var keywords = {
+      labels: ["Trump", "Obama", "President", "Inaguration", "Sadness"],
+      datasets: [
+         {
+            label: "Keywords",
+            backgroundColor: "rgba(33,150,242,0.5)",
+            borderColor: "rgba(33,150,242,1)",
+            pointBackgroundColor: "rgba(255,99,132,1)",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgba(255,99,132,1)",
+            data: [.5, 3, 2, 2.5, 4]
          }
-      }
+      ]
    };
 
    var myChart = new Chart(ctx, {
       type: 'radar',
-      data: ageData,
-      options: ageOptions
+      data: data,
+      options: options
    });
-
-   var agePlot = new Chart(age, {
-      type: 'polar',
-      data:
-      options:
-   });
-
-   var keywords = [['test', 2], ['hey', 3], ['fake news', 5]];
-   var cloudOptions = {
-      list: keywords,
-      color: 'random-light',
-      minRotation: 0,
-      maxRotation: 0,
-      shape: circle
-   };
-   var myCloud = new WordCloud(document.getElementById('cloud'), cloudOptions);
+   
 </script>

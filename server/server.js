@@ -6,11 +6,11 @@ var whois = require('./node_modules/whois-json/index.js');
 var bodyParser = require('body-parser');
 var watson = require('watson-developer-cloud');
 var alchemy_language = watson.alchemy_language({
-	api_key: '08ba5e537d6334cb5105f139e001fdaa795fab49'
+	api_key: 'a8d547d6889cb71053e6d955026bca31616fb65b'
 });
 
 var parameters = {
-  extract: 'entities, concepts, keywords, doc-emotion',
+  extract: 'concepts, keywords, doc-emotion',
   emotion: 1,
   sentiment: 1,
   maxRetrieve: 5,
@@ -39,11 +39,11 @@ router.post('/checkURL', function(req, res) {
 	setTimeout(function(){
 	var found = searchList(url.URL);
 	
-	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.entities, mrwatson.concepts);
+	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.concepts);
 
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
-	res.send(JSON.stringify(resp));}, 5000);
+	res.send(JSON.stringify(resp));}, 3000);
 });
 
 // REGISTER OUR ROUTES
@@ -62,7 +62,7 @@ function response(cred, credreason, age, agedesc, keywords, docemotions, entitie
 	this.agedesc = agedesc;
 	this.keywords = keywords;
 	this.docemotions = docemotions;
-	this.entities = entities;
+	//this.entities = entities;
 	this.concepts = concepts;
 }
 
@@ -94,10 +94,10 @@ var findAge = function(url) {
 			res.agedesc = "This site is greater than 5 years old. Not very suspicious.";
 		}
 		else if (2 < age <= 5) {
-			res.agedesc = "This site is less than 5 years old. I wouldn't worry.";
+			res.agedesc = "This site is less than 5 years old. I would start to worry.";
 		}
 		else if (1 < age <= 2) {
-			res.agedesc = "This site is less than 2 years old. I would start to worry.";
+			res.agedesc = "This site is less than 2 years old. Seems suspicious.";
 		}
 		else{
 			res.agedesc = "This site is less than a year old! I would do some research before I trust this site.";
@@ -117,7 +117,7 @@ var watsonPlease = function(url){
 	    res.keywords = response.keywords;
 		res.docemotions = response.docEmotions;
 		res.concepts = response.concepts;
-		res.entities = response.entities;
+		//res.entities = response.entities;
 	});
 	return res;
 }

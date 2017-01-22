@@ -45,11 +45,14 @@ h2{
 	font-size: 40px;
 	font-weight: bold;
 }
-
+#keyword, #age
+{
+	display: none;
+}
 canvas
 {
-	max-width: 800px;
-	max-height: 800px;
+	max-width: 760px;
+	max-height: 760px;
 }
 #url
 {
@@ -103,10 +106,6 @@ th{
 	color:#767777;
 }
 
-#particles-js
-{
-	background:cornflowerblue;
-}
 
 
 
