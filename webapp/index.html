@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link rel="stylesheet" href="css/main.css">
-        <script src="../node_modules/chart.js/dist/Chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
         
         </script>
     </head>
@@ -191,7 +191,7 @@ var ageData = {
   $("#analyze").click(function(){
     url = $("#url").val();
     $.ajax({
-            url: "http://localhost:8000/api/checkURL",
+            url: "http://sample-env.2zkmre7c3j.us-west-2.elasticbeanstalk.com//api/checkURL",
             type: "POST",
             crossDomain: true,
             data: {"URL": url},
