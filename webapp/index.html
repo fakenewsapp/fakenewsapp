@@ -103,11 +103,16 @@ var ageData = {
         myChart.destroy();
         myChart = undefined;
       }
+      if(agePlot != undefined){
+        agePlot.destroy();
+        agePlot = undefined;
+      }
       if(keywordPlot != undefined){
         keywordPlot.destroy();
+        keywordPlot = undefined;
       }
       document.getElementById("title").innerHTML = "Age of Website";
-      document.getElementById("writing").innerHTML = "Insert age analysis here.";
+      document.getElementById("writing").innerHTML = "A website that is too young looks very suspicious.";
       agePlot = new Chart(age, {
         type: 'polarArea',
         data: ageData,
@@ -120,10 +125,15 @@ var ageData = {
       agePlot.destroy();
       agePlot = undefined;
     }
+    if(myChart != undefined){
+      myChart.destroy();
+      myChart = undefined;
+    }
     if(keywordPlot != undefined){
       keywordPlot.destroy();
+      keywordPlot = undefined;
     }
-  
+
     document.getElementById("title").innerHTML = "Emotional Analysis";
     document.getElementById("writing").innerHTML = " The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.</p><p> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.";
     myChart = new Chart(ctx, {
@@ -142,13 +152,34 @@ var ageData = {
       myChart.destroy();
       myChart = undefined;
     }
+    if(keywordPlot != undefined){
+      keywordPlot.destroy();
+      keywordPlot = undefined;
+    }
     document.getElementById("title").innerHTML = "Keyword Analysis";
-    document.getElementById("writing").innerHTML = "Insert keyword analysis here.";
+    document.getElementById("writing").innerHTML = "The most prominent topics of the article are plotted in descending order.";
     keywordPlot = new Chart(keyword, {
       type: 'bar',
       data: keywords,
       options: options
     });
+  });
+
+  $(".total").click(function(){
+     if(agePlot != undefined){
+        agePlot.destroy();
+        agePlot = undefined;
+     }
+     if(myChart != undefined){
+        myChart.destroy();
+        myChart = undefined;
+     }
+     if(keywordPlot != undefined){
+       keywordPlot.destroy();
+       keywordPlot = undefined;
+     }
+     document.getElementById("title").innerHTML = "Total Analysis";
+     document.getElementById("writing").innerHTML = "Here is a plot of all the previous categories and a final grade for the article.";
   });
 
 
@@ -177,6 +208,24 @@ var ageData = {
                   //agePlot.data.labels[6] = response.url;
                   document.getElementById("writing").innerHTML = response.agedesc + "<br><br>" + response.credreason;
                   agePlot.update();
+              }
+              if(keywordPlot != undefined)
+              {
+                 keywordPlot.data.datasets[0].data[0] = response.keywords[0].relevance;
+                 keywordPlot.data.labels[0] = response.keywords[0].text;
+                 keywordPlot.data.datasets[0].data[1] = response.keywords[1].relevance;
+                 keywordPlot.data.labels[1] = response.keywords[1].text;
+                 keywordPlot.data.datasets[0].data[2] = response.keywords[2].relevance;
+                 keywordPlot.data.labels[2] = response.keywords[2].text;
+                 keywordPlot.data.datasets[0].data[3] = response.keywords[3].relevance;
+                 keywordPlot.data.labels[3] = response.keywords[3].text;
+                 keywordPlot.data.datasets[0].data[4] = response.keywords[4].relevance;
+                 keywordPlot.data.labels[4] = response.keywords[4].text;
+                 keywordPlot.data.datasets[0].data[5] = response.keywords[5].relevance;
+                 keywordPlot.data.labels[5] = response.keywords[5].text;
+                 keywordPlot.data.datasets[0].data[6] = response.keywords[6].relevance;
+                 keywordPlot.data.labels[6] = response.keywords[6].text;
+                 keywordPlot.update();
               }
             },
             error: function (xhr, status) {
@@ -217,7 +266,7 @@ var ageData = {
       }
    };
 
-   
+
    var keywords = {
       labels: ["Trump", "Obama", "President", "Inaguration", "Sadness"],
       datasets: [
@@ -239,5 +288,5 @@ var ageData = {
       data: data,
       options: options
    });
-   
+
 </script>

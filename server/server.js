@@ -13,7 +13,7 @@ var parameters = {
   extract: 'concepts, keywords, doc-emotion',
   emotion: 1,
   sentiment: 1,
-  maxRetrieve: 5,
+  maxRetrieve: 8,
   url: ''
 };
 
@@ -38,7 +38,7 @@ router.post('/checkURL', function(req, res) {
 	var mrwatson = watsonPlease(url.URL);
 	setTimeout(function(){
 	var found = searchList(url.URL);
-	
+
 	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.concepts);
 
 	res.status(200);
@@ -54,7 +54,7 @@ console.log('Magic happens on port ' + port);
 
 // Useful functions
 // ==============================================
-function response(cred, credreason, age, agedesc, keywords, docemotions, entities, concepts)
+function response(cred, credreason, age, agedesc, keywords, docemotions, entities, url, concepts)
 {
 	this.cred = cred;
 	this.credreason = credreason;
@@ -62,7 +62,7 @@ function response(cred, credreason, age, agedesc, keywords, docemotions, entitie
 	this.agedesc = agedesc;
 	this.keywords = keywords;
 	this.docemotions = docemotions;
-	//this.entities = entities;
+	this.url = url;
 	this.concepts = concepts;
 }
 
@@ -78,14 +78,18 @@ var searchList = function(url){
 
 var findAge = function(url) {
 	var res = new response();
+	var str = url.split("/");
+	str = str[2].split("www.");
+	console.log(str[1]);
 	//NEED TO ADD ERROR HANDLING
-	whois(url, function(err, result) {
-		if(err)
+	whois(str[1], function(err, result) {
+		if(err || result == undefined)
 		{
 			res.age = "not found";
 			res.agedesc = "not found";
 			return res;
 		}
+		//res.url = str[1];
 		var i = 0;
 		year = result.creationDate.substring(0, 4);
 		age = 2017 - parseInt(year);
