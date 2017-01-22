@@ -10,7 +10,7 @@ var alchemy_language = watson.alchemy_language({
 });
 
 var parameters = {
-  extract: 'concepts, keywords, doc-emotion',
+  extract: 'keywords, doc-emotion',
   emotion: 1,
   sentiment: 1,
   maxRetrieve: 8,
@@ -49,7 +49,7 @@ router.post('/checkURL', function(req, res) {
 	var found = searchList(result);
 	var siteAge = age.age / 20;
 	var indicator = trainNet(mrwatson.docemotions.anger, mrwatson.docemotions.joy, mrwatson.docemotions.disgust, mrwatson.docemotions.fear, mrwatson.docemotions.sadness, siteAge);
-	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, mrwatson.concepts, indicator);
+	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, indicator);
 	
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
@@ -64,7 +64,7 @@ console.log('Magic happens on port ' + port);
 
 // Useful functions
 // ==============================================
-function response(cred, credreason, age, agedesc, keywords, docemotions, entities, indicator)
+function response(cred, credreason, age, agedesc, keywords, docemotions, indicator)
 {
 	this.cred = cred;
 	this.credreason = credreason;
@@ -122,11 +122,8 @@ var watsonPlease = function(url){
 	  if (err)
 	    console.log('error:', err);
 	  else
-	  	//console.log(response);
 	    res.keywords = response.keywords;
 		res.docemotions = response.docEmotions;
-		res.concepts = response.concepts;
-		//res.entities = response.entities;
 	});
 	return res;
 }
@@ -205,8 +202,8 @@ var trainNet = function(anger, joy, disgust, fear, sadness, age){
 	  }
 	]
 	var trainingOptions = {
-	  rate: .1,
-	  iterations: 80000,
+	  rate: .3,
+	  iterations: 30000,
 	  error: .005,
 	}
 
