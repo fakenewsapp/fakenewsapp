@@ -49,6 +49,7 @@
       <canvas id="ctx" width="1" height="1"></canvas>
       <canvas id="keyword" width="1" height="1"></canvas>
       <canvas id="age" width="1" height="1"></canvas>
+      <canvas id="total" width="1" height="1"></canvas>
       </div>
       <div class="col-sm-4" id="description">
       <h2 id="title"> Emotional Analysis </h2>
@@ -180,6 +181,11 @@ var ageData = {
      }
      document.getElementById("title").innerHTML = "Total Analysis";
      document.getElementById("writing").innerHTML = "Here is a plot of all the previous categories and a final grade for the article.";
+     var end = new Chart(total, {
+        type: 'bubble',
+        data: conclusion,
+        options: bubbleOptions
+     });
   });
 
 
@@ -227,6 +233,10 @@ var ageData = {
                  keywordPlot.data.labels[6] = response.keywords[6].text;
                  keywordPlot.update();
               }
+              if (total != undefined)
+              {
+
+              }
             },
             error: function (xhr, status) {
                 alert(status);
@@ -266,7 +276,6 @@ var ageData = {
       }
    };
 
-
    var keywords = {
       labels: ["Trump", "Obama", "President", "Inaguration", "Sadness"],
       datasets: [
@@ -288,5 +297,52 @@ var ageData = {
       data: data,
       options: options
    });
+
+   var conclusion = {
+      datasets: [
+      {
+         label: 'Fox News',
+         data: [
+            {
+               x: 20,
+               y: 30,
+               r: 15
+            },
+            {
+               x: 40,
+               y: 10,
+               r: 10
+            }
+         ],
+         backgroundColor:"#FF6384",
+         hoverBackgroundColor: "#FF6384",
+      },
+      {
+         label: 'NPR News',
+         data: [
+            {
+               x: 10,
+               y: 10,
+               r: 15
+            },
+            {
+               x: 40,
+               y: 40,
+               r: 10
+            }
+         ],
+         backgroundColor:"#FF6384",
+         hoverBackgroundColor: "#FF6384",
+      }]
+   };
+
+   var bubbleOptions = {
+      elements: {
+         points: {
+            borderWidth: 1,
+            borderColor: 'rgb(0, 0, 0)'
+         }
+      }
+   };
 
 </script>
