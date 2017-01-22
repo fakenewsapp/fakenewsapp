@@ -66,9 +66,10 @@
 <script>
 var agePlot;
 var keywordPlot;
+var bubble;
 var res;
 var ageData = {
-    labels: ["Fox News", "NPR", "The Verge", "CNBC", "LA Times", "CBS","Your Site"],
+    labels: ["Fox News", "NPR", "The Verge", "CNBC", "LA Times", "CBS", "Your Site"],
       datasets: [{
         label: 'Ages of some popular sites',
          data: [22, 24, 19, 20, 27, 24, 0],
@@ -104,13 +105,13 @@ var ageData = {
         myChart.destroy();
         myChart = undefined;
       }
-      if(agePlot != undefined){
-        agePlot.destroy();
-        agePlot = undefined;
-      }
       if(keywordPlot != undefined){
         keywordPlot.destroy();
         keywordPlot = undefined;
+      }
+      if(bubble != undefined){
+         bubble.destroy();
+         bubble = undefined;
       }
       document.getElementById("title").innerHTML = "Age of Website";
       document.getElementById("writing").innerHTML = "A website that is too young looks very suspicious.";
@@ -126,15 +127,14 @@ var ageData = {
       agePlot.destroy();
       agePlot = undefined;
     }
-    if(myChart != undefined){
-      myChart.destroy();
-      myChart = undefined;
-    }
     if(keywordPlot != undefined){
       keywordPlot.destroy();
       keywordPlot = undefined;
     }
-
+    if(bubble != undefined){
+      bubble.destroy();
+      bubble = undefined;
+    }
     document.getElementById("title").innerHTML = "Emotional Analysis";
     document.getElementById("writing").innerHTML = " The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.</p><p> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.";
     myChart = new Chart(ctx, {
@@ -153,9 +153,9 @@ var ageData = {
       myChart.destroy();
       myChart = undefined;
     }
-    if(keywordPlot != undefined){
-      keywordPlot.destroy();
-      keywordPlot = undefined;
+    if(bubble != undefined){
+      bubble.destroy();
+      bubble = undefined;
     }
     document.getElementById("title").innerHTML = "Keyword Analysis";
     document.getElementById("writing").innerHTML = "The most prominent topics of the article are plotted in descending order.";
@@ -181,7 +181,7 @@ var ageData = {
      }
      document.getElementById("title").innerHTML = "Total Analysis";
      document.getElementById("writing").innerHTML = "Here is a plot of all the previous categories and a final grade for the article.";
-     var end = new Chart(total, {
+     bubble = new Chart(total, {
         type: 'bubble',
         data: conclusion,
         options: bubbleOptions
@@ -233,9 +233,13 @@ var ageData = {
                  keywordPlot.data.labels[6] = response.keywords[6].text;
                  keywordPlot.update();
               }
-              if (total != undefined)
+              if (bubble != undefined)
               {
-
+                 bubble.data.datasets[2].data[0].x = 6;
+                 bubble.data.datasets[2].data[0].y = parseInt(response.docemotions.sadness);
+                 bubble.data.datasets[2].data[0].r = response.age/2.0;
+                 bubble.update();
+                 console.log(bubble.data.datasets[2].data[0].y);
               }
             },
             error: function (xhr, status) {
@@ -304,14 +308,19 @@ var ageData = {
          label: 'Fox News',
          data: [
             {
-               x: 20,
-               y: 30,
-               r: 15
+               x: 7,
+               y: .24275,
+               r: 12
             },
             {
-               x: 40,
-               y: 10,
-               r: 10
+               x: 9,
+               y: .305219,
+               r: 12
+            },
+            {
+               x: 8.5,
+               y: .287713,
+               r: 12
             }
          ],
          backgroundColor:"#FF6384",
@@ -321,18 +330,35 @@ var ageData = {
          label: 'NPR News',
          data: [
             {
-               x: 10,
-               y: 10,
-               r: 15
+               x: 8.5,
+               y: .385338,
+               r: 11
             },
             {
-               x: 40,
-               y: 40,
-               r: 10
+               x: 10,
+               y: .232852,
+               r: 11
+            },
+            {
+               x: 9.5,
+               y: .30776,
+               r: 11
             }
          ],
-         backgroundColor:"#FF6384",
-         hoverBackgroundColor: "#FF6384",
+         backgroundColor:"#067BC2",
+         hoverBackgroundColor: "#067BC2",
+      },
+      {
+         label: 'Your site',
+         data: [
+            {
+               x: 5,
+               y: 0.34,
+               r: 0
+            }
+         ],
+         backgroundColor:"#F9E784",
+         hoverBackgroundColor: "#F9E784",
       }]
    };
 
@@ -342,6 +368,14 @@ var ageData = {
             borderWidth: 1,
             borderColor: 'rgb(0, 0, 0)'
          }
+      },
+      scales: {
+         xAxes: [{
+            ticks: {
+               max: 10,
+               min: 0
+            }
+         }]
       }
    };
 
