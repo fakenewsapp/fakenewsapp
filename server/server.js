@@ -6,7 +6,7 @@ var whois = require('./node_modules/whois-json/index.js');
 var bodyParser = require('body-parser');
 var watson = require('watson-developer-cloud');
 var alchemy_language = watson.alchemy_language({
-	api_key: 'a8d547d6889cb71053e6d955026bca31616fb65b'
+	api_key: '08ba5e537d6334cb5105f139e001fdaa795fab49'
 });
 
 var parameters = {
@@ -50,7 +50,7 @@ router.post('/checkURL', function(req, res) {
 	var siteAge = age.age / 20;
 	var indicator = trainNet(mrwatson.docemotions.anger, mrwatson.docemotions.joy, mrwatson.docemotions.disgust, mrwatson.docemotions.fear, mrwatson.docemotions.sadness, siteAge);
 	var resp = new response(found.cred, found.credreason, age.age, age.agedesc, mrwatson.keywords, mrwatson.docemotions, indicator);
-	
+
 	res.status(200);
 	res.set('Content-Type', 'text/plain');
 	res.send(JSON.stringify(resp));}, 5000);
