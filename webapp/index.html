@@ -51,7 +51,7 @@
       </div>
       <div class="col-sm-4" id="description">
       <h2 id="title"> Emotional Analysis </h2>
-      <p id="writing"> The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.<br><br> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.</p>
+      <p id="writing"></p>
       <div>
     </div>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
@@ -62,42 +62,11 @@
 </html>
 
 <script>
-var agePlot;
-var keywordPlot;
-var bubble;
-var res;
-var ageData = {
-    labels: ["Fox News", "NPR", "The Verge", "CNBC", "LA Times", "CBS", "Your Site"],
-      datasets: [{
-        label: 'Ages of some popular sites',
-         data: [22, 24, 19, 20, 27, 24, 0],
-         backgroundColor: [
-            "rgba(33,150,242,0.5)",
-            "rgba(255,193,7,0.5)",
-            "rgba(0,105,92,0.5)",
-            "rgba(81,45,168,0.5)",
-            "rgba(219,34,42,0.5)",
-            "rgba(46,125,50,0.5)",
-            "rgba(5,60,94,.9)"
-        ],
-        borderColor:[
-            "rgba(33,150,242,1)",
-            "rgba(255,193,7,1)",
-            "rgba(0,105,92,1)",
-            "rgba(81,45,168,1)",
-            "rgba(219,34,42,1)",
-            "rgba(46,125,50,1)",
-            "rgba(5,60,94,1)"
-        ]
-      }]
-   };
-   var ageOptions = {
-      elements: {
-         arc: {
-            borderColor: "#000000"
-         }
-      }
-   };
+var agePlot, keywordPlot, bubble, res;
+  $(document).ready(function(){
+    document.getElementById("writing").innerHTML = emotionText;
+  });
+
   $(".entities").click(function(){
       if(myChart != undefined){
         myChart.destroy();
@@ -112,7 +81,7 @@ var ageData = {
          bubble = undefined;
       }
       document.getElementById("title").innerHTML = "Age of Website";
-      document.getElementById("writing").innerHTML = "'Fake news is nothing new. But bogus stories can reach more people more quickly via social media than what good old-fashioned viral emails could accomplish in years past. <br> <br> Concern about the phenomenon led Facebook and Google to announce that they’ll crack down on fake news sites, restricting their ability to garner ad revenue. Perhaps that could dissipate the amount of malarkey online, though news consumers themselves are the best defense against the spread of misinformation.' <br> &#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;-FactCheck.org";
+      document.getElementById("writing").innerHTML = ageText;
       agePlot = new Chart(age, {
         type: 'polarArea',
         data: ageData,
@@ -134,7 +103,7 @@ var ageData = {
       bubble = undefined;
     }
     document.getElementById("title").innerHTML = "Emotional Analysis";
-    document.getElementById("writing").innerHTML = "The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.<br> <br> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.";
+    document.getElementById("writing").innerHTML = emotionText;
     myChart = new Chart(ctx, {
       type: 'radar',
       data: data,
@@ -156,7 +125,7 @@ var ageData = {
       bubble = undefined;
     }
     document.getElementById("title").innerHTML = "Keyword Analysis";
-    document.getElementById("writing").innerHTML = "The most prominent topics of the article are plotted in descending order according to relevancy. <br> <br> Paying close attention to the keywords of the article can show you the overarching themes of the article.";
+    document.getElementById("writing").innerHTML = keywordText;
     keywordPlot = new Chart(keyword, {
       type: 'bar',
       data: keywords,
@@ -184,7 +153,7 @@ var ageData = {
         data: conclusion,
         options: bubbleOptions
      });
-     document.getElementById("writing").innerHTML = "There are several criteria that can be used to determine whether or not a news article is 'fake news'. <br> <br> Using the categories that we found most suitable, we were able to create a neural network can take in news articles as input and evaluate reliability. It produces a number between 0 and 1, 0 for reliable and 1 for 'definitely fake news'. <br> <br> Thanks to IBM Watson, we used some of his analysis in our neural network. And thanks to the creators of synaptic.js, the framework that allows us to make this analysis. <br><br> If your score is above .5, I would strongly suggest checking the article's references. <br><br> If it is above .75, then either the site is a known creator of 'fake news', or the neural network has determined that this is 'fake news'.";
+     document.getElementById("writing").innerHTML = neuralText;
   });
 
 
@@ -198,48 +167,44 @@ var ageData = {
             dataType: "json",
             success: function (response) {
               console.log(response);
-              res = response;
-                if(myChart != undefined){
-                  myChart.data.datasets[0].data[0] = response.docemotions.anger;
-                  myChart.data.datasets[0].data[1] = response.docemotions.disgust;
-                  myChart.data.datasets[0].data[2] = response.docemotions.fear;
-                  myChart.data.datasets[0].data[3] = response.docemotions.joy;
-                  myChart.data.datasets[0].data[4] = response.docemotions.sadness;
-                  myChart.update();
-                }
-                if(agePlot != undefined)
-                {
-                  agePlot.data.datasets[0].data[6] = response.age;
-                  document.getElementById("writing").innerHTML += "<br><br>" +  response.agedesc + "<br><br>" + response.credreason;
-                  agePlot.update();
+
+              //fill emotion data
+              var array = $.map(response.docemotions, function(value, index) {
+                  return [value];
+              });
+              data.datasets[0].data.forEach(function(b, i){
+                data.datasets[0].data[i] = array[i];
+              });
+              ageText += "<br><br>" +  response.agedesc + "<br><br>" + response.credreason;
+              //fill age data
+              ageData.datasets[0].data[6] = response.age;
+
+              //fill keyword data
+              keywords.datasets[0].data.forEach(function(b, i){
+                keywords.datasets[0].data[i] = response.keywords[i].relevance;
+                keywords.labels[i] = response.keywords[i].text;
+              });
+              //fill neural data
+              conclusion.datasets[2].data[0].x = response.age;
+              conclusion.datasets[2].data[0].y = response.indicator[0];
+              conclusion.datasets[2].data[0].r = 11;
+              neuralText += "<br><br> The score for your news article: " + response.indicator[0] + ".";
+
+              //update current chart
+              if(myChart != undefined){
+                myChart.update();
+              }
+              if(agePlot != undefined)
+              {    
+                agePlot.update();
               }
               if(keywordPlot != undefined)
               {
-                 keywordPlot.data.datasets[0].data[0] = response.keywords[0].relevance;
-                 keywordPlot.data.labels[0] = response.keywords[0].text;
-                 keywordPlot.data.datasets[0].data[1] = response.keywords[1].relevance;
-                 keywordPlot.data.labels[1] = response.keywords[1].text;
-                 keywordPlot.data.datasets[0].data[2] = response.keywords[2].relevance;
-                 keywordPlot.data.labels[2] = response.keywords[2].text;
-                 keywordPlot.data.datasets[0].data[3] = response.keywords[3].relevance;
-                 keywordPlot.data.labels[3] = response.keywords[3].text;
-                 keywordPlot.data.datasets[0].data[4] = response.keywords[4].relevance;
-                 keywordPlot.data.labels[4] = response.keywords[4].text;
-                 keywordPlot.data.datasets[0].data[5] = response.keywords[5].relevance;
-                 keywordPlot.data.labels[5] = response.keywords[5].text;
-                 keywordPlot.data.datasets[0].data[6] = response.keywords[6].relevance;
-                 keywordPlot.data.labels[6] = response.keywords[6].text;
                  keywordPlot.update();
               }
               if (bubble != undefined)
               {
-                 bubble.data.datasets[2].data[0].x = response.age;
-                 bubble.data.datasets[2].data[0].y = response.indicator[0];
-                 bubble.data.datasets[2].data[0].r = 11;
-                 bubble.update();
-                 console.log(bubble.data.datasets[2].data[0].y);
-
-                 document.getElementById("writing").innerHTML += "<br><br> The score for your news article: " + response.indicator[0] + ".";
+                 bubble.update();                 
               }
             },
             error: function (xhr, status) {
@@ -247,6 +212,13 @@ var ageData = {
             }
         });
 });
+
+
+// Initial Chart Data
+  var emotionText = "The point of fake news is to leverage the reader's implicit bias through use of emotional statements and phrases. IBM Watson provides useful analysis of the 'emotion' of text.<br> <br> While emotion is not a direct indicator that a news article is fake, it will help you recognize the bias of the writer, so you can make your own decision personally.";
+  var neuralText = "There are several criteria that can be used to determine whether or not a news article is 'fake news'. <br> <br> Using the categories that we found most suitable, we were able to create a neural network can take in news articles as input and evaluate reliability. It produces a number between 0 and 1, 0 for reliable and 1 for 'definitely fake news'. <br> <br> Thanks to IBM Watson, we used some of his analysis in our neural network. And thanks to the creators of synaptic.js, the framework that allows us to make this analysis. <br><br> If your score is above .5, I would strongly suggest checking the article's references. <br><br> If it is above .75, then either the site is a known creator of 'fake news', or the neural network has determined that this is 'fake news'.";
+  var keywordText = "The most prominent topics of the article are plotted in descending order according to relevancy. <br> <br> Paying close attention to the keywords of the article can show you the overarching themes of the article.";
+  var ageText = "'Fake news is nothing new. But bogus stories can reach more people more quickly via social media than what good old-fashioned viral emails could accomplish in years past. <br> <br> Concern about the phenomenon led Facebook and Google to announce that they’ll crack down on fake news sites, restricting their ability to garner ad revenue. Perhaps that could dissipate the amount of malarkey online, though news consumers themselves are the best defense against the spread of misinformation.' <br> &#160;&#160;&#160;&#160;&#160;&#160;&#160; &#160;&#160;&#160;&#160;&#160;&#160;-FactCheck.org";
 
    var data = {
       labels: ["Anger", "Disgust", "Fear", "Joy", "Sadness"],
@@ -330,6 +302,39 @@ var ageData = {
       ]
    };
 
+   var ageData = {
+    labels: ["Fox News", "NPR", "The Verge", "CNBC", "LA Times", "CBS", "Your Site"],
+      datasets: [{
+        label: 'Ages of some popular sites',
+         data: [22, 24, 19, 20, 27, 24, 0],
+         backgroundColor: [
+            "rgba(33,150,242,0.5)",
+            "rgba(255,193,7,0.5)",
+            "rgba(0,105,92,0.5)",
+            "rgba(81,45,168,0.5)",
+            "rgba(219,34,42,0.5)",
+            "rgba(46,125,50,0.5)",
+            "rgba(5,60,94,.9)"
+        ],
+        borderColor:[
+            "rgba(33,150,242,1)",
+            "rgba(255,193,7,1)",
+            "rgba(0,105,92,1)",
+            "rgba(81,45,168,1)",
+            "rgba(219,34,42,1)",
+            "rgba(46,125,50,1)",
+            "rgba(5,60,94,1)"
+        ]
+      }]
+   };
+   var ageOptions = {
+      elements: {
+         arc: {
+            borderColor: "#000000"
+         }
+      }
+   };
+
    var myChart = new Chart(ctx, {
       type: 'radar',
       data: data,
@@ -409,6 +414,10 @@ var ageData = {
             {
               display: true,
               labelString: 'Fake News Indicator'
+            },
+            ticks: {
+              max:1,
+              min: 0
             }
           }],
           xAxes: [{
